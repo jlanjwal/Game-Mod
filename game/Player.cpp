@@ -340,6 +340,32 @@ void idInventory::RestoreInventory( idPlayer *owner, const idDict &dict ) {
 	armor			= dict.GetInt( "armor", "50" );
 	maxarmor		= dict.GetInt( "maxarmor", "100" );
 
+	//levels and stats
+	characterClass = dict.GetString("characterClass", "base");
+	level			= dict.GetInt("level", "1");
+	strength		= dict.GetInt("strength", "10");
+	magic =	dict.GetInt("magic", "10");
+	defense = dict.GetInt("defense", "10");
+	resistance = dict.GetInt("resistance", "10");
+	speed = dict.GetInt("speed", "10");
+	dexterity = dict.GetInt("dexterity", "10");
+
+	baseHealth = dict.GetInt("baseHealth", "100");
+	baseStrength = dict.GetInt("baseStrength", "10");
+	baseMagic = dict.GetInt("baseMagic", "10");
+	baseDefense = dict.GetInt("baseDefense", "10");
+	baseResistance = dict.GetInt("baseResistance", "10");
+	baseSpeed = dict.GetInt("baseSpeed", "10");
+	baseDexterity = dict.GetInt("baseDexterity", "10");
+
+	healthGrowth = dict.GetInt("HealthGrowth", "0");
+	strengthGrowth = dict.GetInt("strengthGrowth", "0");
+	magicGrowth = dict.GetInt("magicGrowth", "0");
+	defenseGrowth = dict.GetInt("defenseGrowth", "0");
+	resistanceGrowth = dict.GetInt("resistanceGrowth", "0");
+	speedGrowth = dict.GetInt("speedGrowth", "0");
+	dexterityGrowth = dict.GetInt("dexterityGrowth", "0");
+
 	// ammo
 	for( i = 0; i < MAX_AMMOTYPES; i++ ) {
 		name = rvWeapon::GetAmmoNameForIndex ( i );
@@ -469,6 +495,32 @@ void idInventory::Save( idSaveGame *savefile ) const {
 	savefile->WriteInt( secretAreasDiscovered );
 
 	savefile->WriteSyncId();
+
+	//Saving stats and levels
+	savefile->WriteString(characterClass);
+	savefile->WriteInt(level);
+	savefile->WriteInt(strength);
+	savefile->WriteInt(magic);
+	savefile->WriteInt(defense);
+	savefile->WriteInt(resistance);
+	savefile->WriteInt(speed);
+	savefile->WriteInt(dexterity);
+
+	savefile->WriteInt(baseHealth);
+	savefile->WriteInt(baseStrength);
+	savefile->WriteInt(baseMagic);
+	savefile->WriteInt(baseDefense);
+	savefile->WriteInt(baseResistance);
+	savefile->WriteInt(baseSpeed);
+	savefile->WriteInt(baseDexterity);
+
+	savefile->WriteInt(healthGrowth);
+	savefile->WriteInt(strengthGrowth);
+	savefile->WriteInt(magicGrowth);
+	savefile->WriteInt(defenseGrowth);
+	savefile->WriteInt(resistanceGrowth);
+	savefile->WriteInt(speedGrowth);
+	savefile->WriteInt(dexterityGrowth);
 }
 
 /*
@@ -560,6 +612,32 @@ void idInventory::Restore( idRestoreGame *savefile ) {
 	savefile->ReadInt( secretAreasDiscovered );
 
 	savefile->ReadSyncId( "idInventory::Restore" );
+
+	//Restore stats and levels
+	savefile->ReadString(characterClass);
+	savefile->ReadInt(level);
+	savefile->ReadInt(strength);
+	savefile->ReadInt(magic);
+	savefile->ReadInt(defense);
+	savefile->ReadInt(resistance);
+	savefile->ReadInt(speed);
+	savefile->ReadInt(dexterity);
+
+	savefile->ReadInt(baseHealth);
+	savefile->ReadInt(baseStrength);
+	savefile->ReadInt(baseMagic);
+	savefile->ReadInt(baseDefense);
+	savefile->ReadInt(baseResistance);
+	savefile->ReadInt(baseSpeed);
+	savefile->ReadInt(baseDexterity);
+
+	savefile->ReadInt(healthGrowth);
+	savefile->ReadInt(strengthGrowth);
+	savefile->ReadInt(magicGrowth);
+	savefile->ReadInt(defenseGrowth);
+	savefile->ReadInt(resistanceGrowth);
+	savefile->ReadInt(speedGrowth);
+	savefile->ReadInt(dexterityGrowth);
 }
 
 /*
@@ -3400,14 +3478,63 @@ void idPlayer::UpdateHudStats( idUserInterface *_hud ) {
 		_hud->HandleNamedEvent ( "updateHealth" );
 	}
 		
+	//Update Stats in HUD JOSHMOD
 	temp = _hud->State().GetInt ( "player_armor", "-1" );
-	if ( temp != inventory.armor ) {
-		_hud->SetStateInt ( "player_armorDelta", temp == -1 ? 0 : (temp - inventory.armor) );
-		_hud->SetStateInt ( "player_armor", inventory.armor );
-		_hud->SetStateFloat	( "player_armorpct", idMath::ClampFloat ( 0.0f, 1.0f, (float)inventory.armor / (float)inventory.maxarmor ) );
+	if ( temp != inventory.level ) {
+		_hud->SetStateInt ( "player_armorDelta", temp == -1 ? 0 : (temp - inventory.level) );
+		_hud->SetStateInt ( "player_armor", inventory.level );
+		_hud->SetStateFloat	( "player_armorpct", idMath::ClampFloat ( 0.0f, 1.0f, (float)inventory.level ) );
 		_hud->HandleNamedEvent ( "updateArmor" );
 	}
+
+	temp = _hud->State().GetInt("player_strength", "-1");
+	if (temp != inventory.level) {
+		_hud->SetStateInt("player_strengthDelta", temp == -1 ? 0 : (temp - inventory.strength));
+		_hud->SetStateInt("player_strength", inventory.strength);
+		_hud->SetStateFloat("player_strengthpct", idMath::ClampFloat(0.0f, 1.0f, (float)inventory.strength));
+		_hud->HandleNamedEvent("updateStrength");
+	}
+
+	temp = _hud->State().GetInt("player_magic", "-1");
+	if (temp != inventory.level) {
+		_hud->SetStateInt("player_magicDelta", temp == -1 ? 0 : (temp - inventory.magic));
+		_hud->SetStateInt("player_magic", inventory.magic);
+		_hud->SetStateFloat("player_magicpct", idMath::ClampFloat(0.0f, 1.0f, (float)inventory.magic));
+		_hud->HandleNamedEvent("updateMagic");
+	}
 	
+	temp = _hud->State().GetInt("player_defense", "-1");
+	if (temp != inventory.defense) {
+		_hud->SetStateInt("player_defenseDelta", temp == -1 ? 0 : (temp - inventory.defense));
+		_hud->SetStateInt("player_defense", inventory.defense);
+		_hud->SetStateFloat("player_defensepct", idMath::ClampFloat(0.0f, 1.0f, (float)inventory.defense));
+		_hud->HandleNamedEvent("updateDefense");
+	}
+
+	temp = _hud->State().GetInt("player_resistance", "-1");
+	if (temp != inventory.resistance) {
+		_hud->SetStateInt("player_resistanceDelta", temp == -1 ? 0 : (temp - inventory.resistance));
+		_hud->SetStateInt("player_resistance", inventory.resistance);
+		_hud->SetStateFloat("player_resistancepct", idMath::ClampFloat(0.0f, 1.0f, (float)inventory.resistance));
+		_hud->HandleNamedEvent("updateResistance");
+	}
+
+	temp = _hud->State().GetInt("player_speed", "-1");
+	if (temp != inventory.speed) {
+		_hud->SetStateInt("player_speedDelta", temp == -1 ? 0 : (temp - inventory.speed));
+		_hud->SetStateInt("player_speed", inventory.speed);
+		_hud->SetStateFloat("player_speedpct", idMath::ClampFloat(0.0f, 1.0f, (float)inventory.speed));
+		_hud->HandleNamedEvent("updateSpeed");
+	}
+
+	temp = _hud->State().GetInt("player_dexterity", "-1");
+	if (temp != inventory.dexterity) {
+		_hud->SetStateInt("player_dexterityDelta", temp == -1 ? 0 : (temp - inventory.dexterity));
+		_hud->SetStateInt("player_dexterity", inventory.dexterity);
+		_hud->SetStateFloat("player_dexteritypct", idMath::ClampFloat(0.0f, 1.0f, (float)inventory.dexterity));
+		_hud->HandleNamedEvent("updateDexterity");
+	}
+
 	// Boss bar
 	if ( _hud->State().GetInt ( "boss_health", "-1" ) != (bossEnemy ? bossEnemy->health : -1) ) {
 		if ( !bossEnemy || bossEnemy->health <= 0 ) {
@@ -9947,6 +10074,8 @@ void idPlayer::Killed( idEntity *inflictor, idEntity *attacker, int damage, cons
 	aiManager.RemoveTeammate( this );
 	
 	isChatting = false;
+
+
 }
 
 /*
@@ -10263,6 +10392,11 @@ void idPlayer::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &di
 		}
 
 		int oldHealth = health;
+		int randnum;
+		if ((randnum = rand() % 100 + 1) <= inventory.speed) {
+			damage = 0;
+		}
+		damage = int(damage * (((inventory.defense / 3) + (inventory.resistance / 3)) / 100));
 		health -= damage;
 
 		GAMELOG_ADD ( va("player%d_damage_taken", entityNumber ), damage );
@@ -12956,13 +13090,14 @@ idPlayer::DamageFeedback
 ================
 */
 void idPlayer::DamageFeedback( idEntity *victim, idEntity *inflictor, int &damage ) {
-	
 	//rvTramCars weren't built on the idActor inheritance hierarchy but need to be treated like one when shot.
 	//TODO: Maybe add a key to entity flags that will allow them to be shot as actors even if they aren't actors?
 	if( !victim || ( !victim->IsType( idActor::GetClassType() ) && !victim->IsType( rvTramCar::GetClassType() ) ) || victim->health <= 0 ) {
 		return;
 	}
-
+	if (victim->health - damage <= 0) {
+		levelUp();
+	}
 	bool armorHit = false;
 
 	if( gameLocal.isMultiplayer && victim->IsType( idPlayer::GetClassType() ) ) {
@@ -14078,3 +14213,126 @@ int idPlayer::CanSelectWeapon(const char* weaponName)
 }
 
 // RITUAL END
+
+void idPlayer::levelUp()
+{
+	int randnum;
+	inventory.level += 1;
+	if ((randnum = rand() % 100 + 1) <= inventory.strengthGrowth) {
+		inventory.strength += 1;
+		inventory.baseStrength += 1;
+	}
+	if ((randnum = rand() % 100 + 1) <= inventory.magicGrowth) {
+		inventory.magic += 1;
+		inventory.baseMagic += 1;
+	}
+	if ((randnum = rand() % 100 + 1) <= inventory.dexterityGrowth) {
+		inventory.dexterity += 1;
+		inventory.baseDexterity += 1;
+	}
+	if ((randnum = rand() % 100 + 1) <= inventory.speedGrowth) {
+		inventory.speed += 1;
+		inventory.baseSpeed += 1;
+	}
+	if ((randnum = rand() % 100 + 1) <= inventory.defenseGrowth) {
+		inventory.defense += 1;
+		inventory.baseDefense += 1;
+	}
+	if ((randnum = rand() % 100 + 1) <= inventory.resistanceGrowth) {
+		inventory.resistance+= 1;
+		inventory.baseResistance += 1;
+	}
+	if ((randnum = rand() % 100 + 1) <= inventory.healthGrowth) {
+		inventory.maxHealth += 5;
+		inventory.baseHealth += 5;
+		this->health += 5;
+	}
+}
+
+void idPlayer::changeCharacterClass(idStr className) {
+	if (className == "sniper") {
+		inventory.maxHealth = inventory.baseHealth;
+		inventory.healthGrowth = 40;
+		inventory.strength = inventory.baseStrength;
+		inventory.strengthGrowth = 35;
+		inventory.magic = int(inventory.baseMagic * .8);
+		inventory.magicGrowth = 25;
+		inventory.speed = inventory.baseSpeed;
+		inventory.speedGrowth = 30;
+		inventory.dexterity = int(inventory.baseDexterity * 1.2);
+		inventory.dexterityGrowth = 50;
+		inventory.defense = inventory.baseDefense;
+		inventory.defenseGrowth = 30;
+		inventory.resistance = inventory.baseResistance;
+		inventory.resistanceGrowth = 30;
+	}
+	else if (className == "armoredknight") {
+		inventory.maxHealth = int(inventory.baseHealth * 1.3);
+		inventory.healthGrowth = 60;
+		inventory.strength = int(inventory.baseStrength * 1.1);
+		inventory.strengthGrowth = 40;
+		inventory.magic = int(inventory.baseMagic * .5);
+		inventory.magicGrowth = 5;
+		inventory.speed = int(inventory.baseSpeed * .3);
+		inventory.speedGrowth = 5;
+		inventory.dexterity = inventory.baseDexterity;
+		inventory.dexterityGrowth = 30;
+		inventory.defense = int(inventory.baseDefense * 1.7);
+		inventory.defenseGrowth = 70;
+		inventory.resistance = int(inventory.baseResistance * .5);
+		inventory.resistanceGrowth = 20;
+	}
+	else if (className == "swordsmaster") {
+		inventory.maxHealth = int(inventory.baseHealth * 1.1);
+		inventory.healthGrowth = 55;
+		inventory.strength = int(inventory.baseStrength * 1.1);
+		inventory.strengthGrowth = 40;
+		inventory.magic = int(inventory.baseMagic * .8);
+		inventory.magicGrowth = 25;
+		inventory.speed = int(inventory.baseSpeed * 1.3);
+		inventory.speedGrowth = 50;
+		inventory.dexterity = int(inventory.baseDexterity * 1.1);
+		inventory.dexterityGrowth = 40;
+		inventory.defense = int(inventory.baseDefense * .9);
+		inventory.defenseGrowth = 30;
+		inventory.resistance = int(inventory.baseResistance * .8);
+		inventory.resistanceGrowth = 25;
+	}
+	else if (className == "berserker") {
+		inventory.maxHealth = int(inventory.baseHealth * 1.5);
+		inventory.healthGrowth = 70;
+		inventory.strength = int(inventory.baseStrength * 1.3);
+		inventory.strengthGrowth = 55;
+		inventory.magic = int(inventory.baseMagic * .3);
+		inventory.magicGrowth = 10;
+		inventory.speed = int(inventory.baseSpeed * .7);
+		inventory.speedGrowth = 30;
+		inventory.dexterity = inventory.baseDexterity;
+		inventory.dexterityGrowth = 40;
+		inventory.defense = int(inventory.baseDefense * .7);
+		inventory.defenseGrowth = 30;
+		inventory.resistance = int(inventory.baseResistance * .2);
+		inventory.resistanceGrowth = 20;
+	}
+	else if (className == "sorceror") {
+		inventory.maxHealth = inventory.baseHealth;
+		inventory.healthGrowth = 40;
+		inventory.strength = int(inventory.baseStrength * .6);
+		inventory.strengthGrowth = 25;
+		inventory.magic = int(inventory.baseMagic * 1.5);
+		inventory.magicGrowth = 55;
+		inventory.speed = inventory.baseSpeed;
+		inventory.speedGrowth = 35;
+		inventory.dexterity = int(inventory.baseDexterity * 1.1);
+		inventory.dexterityGrowth = 35;
+		inventory.defense = int(inventory.baseDefense * .7);
+		inventory.defenseGrowth = 35;
+		inventory.resistance = int(inventory.baseResistance * 1.2);
+		inventory.resistanceGrowth = 50;
+	}
+
+	inventory.characterClass = className;
+	if (this->health > inventory.maxHealth) {
+		this->health = inventory.maxHealth;
+	}
+}

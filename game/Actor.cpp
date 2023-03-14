@@ -2438,6 +2438,15 @@ void idActor::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &dir
 		attacker->DamageFeedback( this, inflictor, damage );
 	}
 
+	if (static_cast<idPlayer*>(attacker) == gameLocal.GetLocalPlayer()) {
+		idPlayer *player = gameLocal.GetLocalPlayer();
+		int randnum;
+		damage = int(damage * ((player->inventory.strength) / 100));
+		if ((randnum = rand() % 100 + 1) <= player->inventory.dexterity) {
+			damage *= 3;
+		}
+	}
+
 // RAVEN BEGIN
 // jnewquist: FIXME - Was this removed from Xenon intentionally?
 #ifdef _XENON
