@@ -208,6 +208,32 @@ public:
 	int						powerupEndTime[ POWERUP_MAX ];
 	int						weaponMods[ MAX_WEAPONS ];
 
+	// Josh Mod Level and Stats
+	idStr					characterClass;
+	int						level;
+	int						strength;
+	int						defense;
+	int						speed;
+	int						dexterity;
+	int						magic;
+	int						resistance;
+
+	int						baseHealth;
+	int						baseStrength;
+	int						baseDefense;
+	int						baseSpeed;
+	int						baseDexterity;
+	int						baseMagic;
+	int						baseResistance;
+
+	int						healthGrowth;
+	int						strengthGrowth;
+	int						defenseGrowth;
+	int						speedGrowth;
+	int						dexterityGrowth;
+	int						magicGrowth;
+	int						resistanceGrowth;
+
  	// multiplayer
  	int						ammoPredictTime;
 	int						ammoRegenStep[ MAX_WEAPONS ];
@@ -492,6 +518,10 @@ public:
  	virtual void			Teleport( const idVec3 &origin, const idAngles &angles, idEntity *destination );
 
 	virtual void			GetDebugInfo ( debugInfoProc_t proc, void* userData );
+
+	//Mod
+	virtual void			levelUp();
+	virtual void			changeCharacterClass(idStr className);
 
 	virtual bool			CanDamage( const idVec3 &origin, idVec3 &damagePoint, idEntity *ignoreEnt );
 
@@ -1330,3 +1360,4 @@ ID_INLINE bool idPlayer::CanFire( void ) const {
 #endif /* !__GAME_PLAYER_H__ */
 
 // RAVEN END
+// Mod stuff

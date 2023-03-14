@@ -2433,9 +2433,24 @@ void idActor::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &dir
 		}
 	}
 
-	if ( !noDmgFeedback ) {
+	if ( !noDmgFeedback && static_cast<idPlayer*>(attacker) == gameLocal.GetLocalPlayer()) {
 		// inform the attacker that they hit someone
 		attacker->DamageFeedback( this, inflictor, damage );
+	}
+
+	if (static_cast<idPlayer*>(attacker) == gameLocal.GetLocalPlayer()) {
+		idPlayer *player = gameLocal.GetLocalPlayer();
+		int randnum;
+		if (player->inventory.characterClass == "sorceror") {
+			damage = int(damage * (1 + ((player->inventory.magic) / 100)));
+		}
+		else {
+			damage = int(damage * (1 + ((player->inventory.strength) / 100)));
+		}
+
+		if ((randnum = rand() % 100 + 1) <= player->inventory.dexterity) {
+			damage *= 3;
+		}
 	}
 
 // RAVEN BEGIN

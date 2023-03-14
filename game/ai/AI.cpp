@@ -864,12 +864,10 @@ void idAI::Spawn( void ) {
 	}
 
 	// Passive or aggressive ai?
-	if ( spawnArgs.GetBool ( "passive" ) ) {
-		Event_BecomePassive ( true );
+	Event_BecomePassive ( true );
 		
-		if ( spawnArgs.GetInt ( "passive" ) > 1 ) {
-			aifl.disableLook = true;
-		}
+	if ( spawnArgs.GetInt ( "passive" ) > 1 ) {
+		aifl.disableLook = true;
 	}
 	
 	// Print out a warning about any AI that is spawned unhidden since they will be all thinking
@@ -1600,6 +1598,9 @@ bool idAI::Pain( idEntity *inflictor, idEntity *attacker, int damage, const idVe
 	if ( enemy.ent == attacker && !enemy.fl.visible ) {
 		UpdateEnemyPosition ( true );
 	}	
+	if (attacker->IsType(idPlayer::GetClassType())) {
+		Event_BecomeAggressive();
+	}
 
 	return aifl.pain;
 }
@@ -1613,7 +1614,10 @@ void idAI::Killed( idEntity *inflictor, idEntity *attacker, int damage, const id
 	idAngles			ang;
 	const char*			modelDeath;
 	const idKeyValue*	kv;
-	
+
+	idPlayer* player = gameLocal.GetLocalPlayer();
+	player->SetInfluenceLevel(0);
+
 	if ( g_debugDamage.GetBool() ) {
 		gameLocal.Printf( "Damage: joint: '%s', zone '%s'\n", animator.GetJointName( ( jointHandle_t )location ), 
 			GetDamageGroup( location ) );
@@ -2480,6 +2484,7 @@ bool idAI::Attack ( const char* attackName, jointHandle_t joint, idEntity* targe
 
 	// Ranged attack (hitscan or projectile)?
 	return ( AttackRanged ( attackName, attackDict, joint, target, pushVelocity ) != NULL );
+	Event_BecomePassive(true);
 }
 
 /*
@@ -2666,6 +2671,9 @@ void idAI::DamageFeedback( idEntity *victim, idEntity *inflictor, int &damage ) 
 	} else if ( victim == enemy.ent ) {
 		aifl.hitEnemy = true;
 	}
+	combat.fl.ignoreEnemies = true;
+	idPlayer* player = gameLocal.GetLocalPlayer();
+	player->SetInfluenceLevel(0);
 }
 
 /*

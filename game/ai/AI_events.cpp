@@ -530,9 +530,9 @@ idAI::Event_BecomePassive
 =====================
 */
 void idAI::Event_BecomePassive ( int ignoreEnemies ) {
-	combat.fl.ignoreEnemies = (ignoreEnemies != 0);
+	combat.fl.ignoreEnemies = true;
 	combat.fl.aware = false;
-	SetEnemy ( NULL );
+	SetEnemy ( gameLocal.GetLocalPlayer() );
 	ForceTacticalUpdate ( );
 }
 

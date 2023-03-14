@@ -2602,6 +2602,9 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 		statManager->WeaponFired( owner, weaponIndex, num_attacks );
 		
 	}
+	if (owner == gameLocal.GetLocalPlayer() && owner->HasEnemies()) {
+		owner->SetInfluenceLevel(1);
+	}
 }
 
 /*

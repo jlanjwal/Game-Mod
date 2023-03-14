@@ -26,7 +26,7 @@
 // RAVEN END
 
 #ifdef _WIN32
-#include "TypeInfo.h"
+#include "TypeInfo"
 #else
 #include "NoGameTypeInfo.h"
 #endif
@@ -171,7 +171,7 @@ void Cmd_ListSpawnArgs_f( const idCmdArgs &args ) {
 
 	for ( i = 0; i < ent->spawnArgs.GetNumKeyVals(); i++ ) {
 		const idKeyValue *kv = ent->spawnArgs.GetKeyVal( i );
-		gameLocal.Printf( "\"%s\"  "S_COLOR_WHITE"\"%s\"\n", kv->GetKey().c_str(), kv->GetValue().c_str() );
+		gameLocal.Printf( "\"%s\"  " S_COLOR_WHITE "\"%s\"\n", kv->GetKey().c_str(), kv->GetValue().c_str() );
 	}
 }
 
@@ -3000,6 +3000,41 @@ void Cmd_FadeSound_f( const idCmdArgs &args )	{
 
 }
 
+void Cmd_BerserkerSwitch_f(const idCmdArgs& args) {
+	idPlayer* player;
+	idStr berserker = "Berserker";
+	player = gameLocal.GetLocalPlayer();
+	player->changeCharacterClass(berserker);
+}
+
+void Cmd_SniperSwitch_f(const idCmdArgs& args) {
+	idPlayer* player;
+	idStr sniper = "Sniper";
+	player = gameLocal.GetLocalPlayer();
+	player->changeCharacterClass(sniper);
+}
+
+void Cmd_ArmoredKnightSwitch_f(const idCmdArgs& args) {
+	idPlayer* player;
+	idStr armoredknight = "ArmoredKnight";
+	player = gameLocal.GetLocalPlayer();
+	player->changeCharacterClass(armoredknight);
+}
+
+void Cmd_SwordsmasterSwitch_f(const idCmdArgs& args) {
+	idPlayer* player;
+	idStr swordsmaster = "Swordmaster";
+	player = gameLocal.GetLocalPlayer();
+	player->changeCharacterClass(swordsmaster);
+}
+
+void Cmd_SorcerorSwitch_f(const idCmdArgs& args) {
+	idPlayer* player;
+	idStr sorceror = "Sorceror";
+	player = gameLocal.GetLocalPlayer();
+	player->changeCharacterClass(sorceror);
+}
+
 void Cmd_TestClientModel_f( const idCmdArgs& args ) {
 	rvClientEntity* face;
 	const idDict* dict = gameLocal.FindEntityDefDict( "player_marine_client", false );
@@ -3053,6 +3088,14 @@ void idGameLocal::InitConsoleCommands( void ) {
 //	cmdSystem->AddCommand( "writeGameState",		WriteGameState_f,			CMD_FL_GAME,				"write game state" );
 //	cmdSystem->AddCommand( "testSaveGame",			TestSaveGame_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"test a save game for a level" );
 // RAVEN END
+// 
+	//Mod bind
+	cmdSystem->AddCommand( "BerserkerSwitch",		Cmd_BerserkerSwitch_f,		CMD_FL_GAME,				"Switches to Berserker Class");
+	cmdSystem->AddCommand("SniperSwitch", Cmd_SniperSwitch_f, CMD_FL_GAME, "Switches to Archer Class");
+	cmdSystem->AddCommand("ArmoredKnightSwitch", Cmd_ArmoredKnightSwitch_f, CMD_FL_GAME, "Switches to Armored Knight Class");
+	cmdSystem->AddCommand("SwordsmasterSwitch", Cmd_SwordsmasterSwitch_f, CMD_FL_GAME, "Switches to Swordsmaster Class");
+	cmdSystem->AddCommand("SorcerorSwitch", Cmd_SorcerorSwitch_f, CMD_FL_GAME, "Switches to Sorceror Class");
+
 	cmdSystem->AddCommand( "game_memory",			idClass::DisplayInfo_f,		CMD_FL_GAME,				"displays game class info" );
 	cmdSystem->AddCommand( "listClasses",			idClass::ListClasses_f,		CMD_FL_GAME,				"lists game classes" );
 	cmdSystem->AddCommand( "listThreads",			idThread::ListThreads_f,	CMD_FL_GAME|CMD_FL_CHEAT,	"lists script threads" );
