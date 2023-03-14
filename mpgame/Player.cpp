@@ -7183,7 +7183,7 @@ void idPlayer::UpdateFocus( void ) {
 				}
 
 				ui->SetStateString( "player_health", va("%i", health ) );
-				ui->SetStateString( "player_armor", va( "%i%%", inventory.armor ) );
+				ui->SetStateString( "player_armor", va( "%i%%", inventory.level ) );
 
 				kv = ent->spawnArgs.MatchPrefix( "gui_", NULL );
 				while ( kv ) {

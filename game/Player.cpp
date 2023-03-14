@@ -340,6 +340,15 @@ void idInventory::RestoreInventory( idPlayer *owner, const idDict &dict ) {
 	armor			= dict.GetInt( "armor", "50" );
 	maxarmor		= dict.GetInt( "maxarmor", "100" );
 
+	//levels and stats
+	level			= dict.GetInt("level", "1");
+	strength		= dict.GetInt("strength", "10");
+	magic =	dict.GetInt("magic", "10");
+	defense = dict.GetInt("defense", "10");
+	resistance = dict.GetInt("resistance", "10");
+	speed = dict.GetInt("speed", "10");
+	dexterity = dict.GetInt("dexterity", "10");
+
 	// ammo
 	for( i = 0; i < MAX_AMMOTYPES; i++ ) {
 		name = rvWeapon::GetAmmoNameForIndex ( i );
@@ -469,6 +478,15 @@ void idInventory::Save( idSaveGame *savefile ) const {
 	savefile->WriteInt( secretAreasDiscovered );
 
 	savefile->WriteSyncId();
+
+	//Saving stats and levels
+	savefile->WriteInt(level);
+	savefile->WriteInt(strength);
+	savefile->WriteInt(magic);
+	savefile->WriteInt(defense);
+	savefile->WriteInt(resistance);
+	savefile->WriteInt(speed);
+	savefile->WriteInt(dexterity);
 }
 
 /*
@@ -560,6 +578,15 @@ void idInventory::Restore( idRestoreGame *savefile ) {
 	savefile->ReadInt( secretAreasDiscovered );
 
 	savefile->ReadSyncId( "idInventory::Restore" );
+
+	//Restore stats and levels
+	savefile->ReadInt(level);
+	savefile->ReadInt(strength);
+	savefile->ReadInt(magic);
+	savefile->ReadInt(defense);
+	savefile->ReadInt(resistance);
+	savefile->ReadInt(speed);
+	savefile->ReadInt(dexterity);
 }
 
 /*
@@ -3401,12 +3428,13 @@ void idPlayer::UpdateHudStats( idUserInterface *_hud ) {
 	}
 		
 	temp = _hud->State().GetInt ( "player_armor", "-1" );
-	if ( temp != inventory.armor ) {
-		_hud->SetStateInt ( "player_armorDelta", temp == -1 ? 0 : (temp - inventory.armor) );
-		_hud->SetStateInt ( "player_armor", inventory.armor );
-		_hud->SetStateFloat	( "player_armorpct", idMath::ClampFloat ( 0.0f, 1.0f, (float)inventory.armor / (float)inventory.maxarmor ) );
+	if ( temp != inventory.level ) {
+		_hud->SetStateInt ( "player_armorDelta", temp == -1 ? 0 : (temp - inventory.level) );
+		_hud->SetStateInt ( "player_armor", inventory.level );
+		_hud->SetStateFloat	( "player_armorpct", idMath::ClampFloat ( 0.0f, 1.0f, (float)inventory.level ) );
 		_hud->HandleNamedEvent ( "updateArmor" );
 	}
+
 	
 	// Boss bar
 	if ( _hud->State().GetInt ( "boss_health", "-1" ) != (bossEnemy ? bossEnemy->health : -1) ) {
@@ -9947,6 +9975,8 @@ void idPlayer::Killed( idEntity *inflictor, idEntity *attacker, int damage, cons
 	aiManager.RemoveTeammate( this );
 	
 	isChatting = false;
+
+
 }
 
 /*
@@ -12956,13 +12986,14 @@ idPlayer::DamageFeedback
 ================
 */
 void idPlayer::DamageFeedback( idEntity *victim, idEntity *inflictor, int &damage ) {
-	
 	//rvTramCars weren't built on the idActor inheritance hierarchy but need to be treated like one when shot.
 	//TODO: Maybe add a key to entity flags that will allow them to be shot as actors even if they aren't actors?
 	if( !victim || ( !victim->IsType( idActor::GetClassType() ) && !victim->IsType( rvTramCar::GetClassType() ) ) || victim->health <= 0 ) {
 		return;
 	}
-
+	if (victim->health - damage <= 0) {
+		levelUp();
+	}
 	bool armorHit = false;
 
 	if( gameLocal.isMultiplayer && victim->IsType( idPlayer::GetClassType() ) ) {
@@ -14078,3 +14109,8 @@ int idPlayer::CanSelectWeapon(const char* weaponName)
 }
 
 // RITUAL END
+
+void idPlayer::levelUp()
+{
+	inventory.level += 1;
+}
