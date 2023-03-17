@@ -14264,7 +14264,7 @@ void idPlayer::changeCharacterClass(idStr className) {
 		inventory.magic = int(inventory.baseMagic * .8);
 		inventory.magicGrowth = 25;
 		inventory.speed = inventory.baseSpeed;
-		inventory.speedGrowth = 30;
+		inventory.speedGrowth = 40;
 		inventory.dexterity = int(inventory.baseDexterity * 1.2);
 		inventory.dexterityGrowth = 50;
 		inventory.defense = inventory.baseDefense;

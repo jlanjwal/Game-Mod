@@ -2672,6 +2672,7 @@ void idAI::DamageFeedback( idEntity *victim, idEntity *inflictor, int &damage ) 
 		aifl.hitEnemy = true;
 	}
 	combat.fl.ignoreEnemies = true;
+	Event_BecomePassive(true);
 	idPlayer* player = gameLocal.GetLocalPlayer();
 	player->SetInfluenceLevel(0);
 }
